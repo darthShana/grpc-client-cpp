@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package robot;
+
+message Empty {}
+
+message Command {
+    int32 thrust = 1;
+    int32 heading = 2;
+}
+
+enum StepType {
+    FORWARD = 0;
+    BACK = 1;
+    LEFT = 2;
+    RIGHT = 3;
+}
+
+enum Mode {
+    MANUAL = 0;
+    TRAINING = 1;
+    AUTONOMOUS = 2;
+}
+
+message Step {
+    StepType type = 1;
+}
+
+message State {
+    int32 speed = 1;
+    int32 heading = 2;
+    Mode mode = 3;
+}
+
+message ModeChange {
+    Mode mode = 1;
+}
+
+message HealthCheckRequest {
+    int64 request_time = 1;
+}
+
+message Health {
+    bool healthy = 1;
+}
+
+service RobotService {
+    rpc ExecuteCommand(Command) returns (State) {}
+    rpc ExecuteStep(Step) returns (State) {}
+    rpc HealthCheck(HealthCheckRequest) returns (Health) {}
+    rpc ModeChangeRequest(ModeChange) returns (State) {}
+
+    rpc ChatStream (Empty) returns (stream State);
+}
